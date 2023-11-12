@@ -17,9 +17,19 @@ def add_new_recipe():
     Start command for adding a recipe to the Vault worksheet
     """
     # Enter recipe information
-    print("Lets create a new recipe!")
+    print("Let's create a new recipe!")
     recipe_name = input("Enter recipe name here:  ")
-    servings = input("Enter number of servings:  ")
+    
+    # Enter a whole number for servings
+    while True:
+        servings_str = input("Enter number of servings:  ")
+        try:
+            servings = int(servings_str)
+            break
+        except ValueError:
+            print("Error! Please enter a whole number for servings:")
+
+    # Enter ingredients
     ingredients = input("Enter the ingredients (separated by commas):  ")
 
     # Print the inforation back to the user for confirmation
