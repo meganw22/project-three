@@ -16,23 +16,32 @@ def add_new_recipe():
     """
     Start command for adding a recipe to the Vault worksheet
     """
-    print("What is the name of your recipe?")
-    recipe_name = input(" \n")
-    print(f"New recipe is called: {recipe_name}\n")
-    print("Is this correct? Yes/No ")
-    user_answer = input().lower()
-    return user_answer
+    # Enter recipe information
+    print("Lets create a new recipe!")
+    recipe_name = input("Enter recipe name here:  ")
+    servings = input("Enter number of servings:  ")
+    ingredients = input("Enter the ingredients (separated by commas):  ")
+
+    # Print the inforation back to the user for confirmation
+    print("\nThis is your new recipe:")
+    print(f"New recipe is called: {recipe_name}")
+    print(f"Number of servings: {servings}")
+    print(f"Your ingredients are: {ingredients} \n")
+
+    print("Is this information correct? Yes/No ")
+    user_answer_recipe = input().lower()
+    return user_answer_recipe
 
 def confirmation():
     """
     Create a loop to confirm if yes or no has been typed
     """
     while True:
-        user_answer = add_new_recipe()
-        if user_answer == "yes":
+        user_answer_recipe = add_new_recipe()
+        if user_answer_recipe == "yes":
             break
         else:
-            print("----")
+            print("")
 
     
 def pull_vault_data():
@@ -40,5 +49,4 @@ def pull_vault_data():
     Retrieve data from the vault worksheet
     """
 
-add_new_recipe()
 confirmation()
