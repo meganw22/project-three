@@ -15,15 +15,15 @@ VAULT_WORKSHEET = SHEET.worksheet('vault')
 
 def add_new_recipe():
     """
-    Start command for adding a recipe to the Vault worksheet
+    Add a recipe to the Vault worksheet database
+    Confirms data and sends data to the vault worksheet
     """
-    # Enter recipe information
     print("Let's create a new recipe!")
     recipe_name = input("Enter recipe name here:  \n").capitalize()
     
-    # Enter a whole number for servings
     while True:
         servings_str = input("Enter number of servings:  \n")
+        # change serving number to an integer
         try:
             servings = int(servings_str)
             break
@@ -31,82 +31,73 @@ def add_new_recipe():
             print("Error! Please enter a whole number for servings:")
 
     # Enter ingredients
-    ingredients_str = input("Enter the ingredients (separated by commas):  \n")
+    ingredients_str = input("Enter the ingredients (separated by commas): \n")
     ingredients = ingredients_str.split(",")
 
     # Print the inforation back to the user for confirmation
     print("\nThis is your new recipe:")
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
-    print(f"Your ingredients are: {ingredients_str} \n")
+    print(f"Your ingredients are: {ingredients} \n")
 
     user_answer_recipe = input("Is this information correct? Yes/No\n").lower()
-    return (recipe_name, servings, ingredients) if user_answer_recipe == "yes" else None
-
-def append_row_vault(recipe_data):
-    """
-    Appends a new row to the vault worksheet
-    """
-    ingredients_combo = ", ".join(recipe_data[2])
-    VAULT_WORKSHEET.append_row([recipe_data[0], recipe_data[1], ingredients_combo])
-    
-def push_to_vault():
-    """
-    Confirms data and sends data to the vault worksheet
-    """
-    while True:
-        recipe_data = add_new_recipe()
-        if recipe_data:
-            print("Updating your recipe database...\n")
-            append_row_vault(recipe_data)   
-            print("Vault updated. Recipe added successfully")
-            break
-        else:
+    if user_answer_recipe == "yes":
+        ingredients_combo = ", ".join(ingredients)
+        VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
+        print("Vault updated. Recipe added successfully\n")
+    else:
             print("Recipe not added to database, please try again.")
-
-def find_recipe_name():
-    """  
-    Find item in the worksheet before updating or deleting
-    """   
-   # cell = VAULT_WORKSHEET.find("search_criteria", in_column=1)
 
 def update_recipe():
     """
     Update existing recipe in the worksheet
-    """
+    """    
 
 def delete_recipe():
     """
     Find the recipe in the worksheet and delete row
     """
 
+def find_recipe_name():
+    """  
+    Find item in the worksheet before updating or deleting
+    """   
+    recipe_name_to_find = input("Enter recipe name to find: \n").capitalize()
+
+    try:
+        cell = VAULT_WORKSHEET.find(recipe_name_to_find, in_column=1)
+        print(f"recipe found on row {cell.row}")
+        print("Recipe Details:")
+        print(f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}")
+        print(f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}")
+        print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}")
+    except gspread.exceptions.CellNotFound:
+        print(f"Recipe '{recipe_name_to_find}' not found")
+
 def main_menu():
     while True:
-        print("Welcome to your online recipe book! Please choose from the following options to proceed:")
         print("\nMain Menu")
         print("1. Add Recipe")
         print("2. Update Recipe")
         print("3. Delete Recipe")
-        print("4. Find recipe by name")
-        print("#. View all recipe names")
+        print("4. View a recipe")
         print("5. Exit")
 
-        choice = input("Enter your menu choice (1-6): \n")
+        choice = input("Enter your menu choice (1-5): \n")
 
-        if choice == "1\n":
+        if choice == "1":
             add_new_recipe()
-        elif choice == "2\n":
+        elif choice == "2":
             update_recipe()
-        elif choice == "3\n":
+        elif choice == "3":
             update_recipe()
-        elif choice == "4\n":
-            find_recipe_by_name()
-        elif choice == "5\n":
+        elif choice == "4":
+            find_recipe_name()
+        elif choice == "5":
             print("Exiting menu, bye babes...")
             break
         else:
-            print("Please pick a number between 1 and 6:")
+            print("Please pick a number between 1 and 5:")
         
 if __name__ == "__main__":
     main_menu()
-    push_to_vault()
