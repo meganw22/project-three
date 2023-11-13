@@ -21,11 +21,11 @@ def add_new_recipe():
     """
     # Enter recipe information
     print("Let's create a new recipe!")
-    recipe_name = input("Enter recipe name here:  ").capitalize()
+    recipe_name = input("Enter recipe name here:  \n").capitalize()
     
     # Enter a whole number for servings
     while True:
-        servings_str = input("Enter number of servings:  ")
+        servings_str = input("Enter number of servings:  \n")
         try:
             servings = int(servings_str)
             break
@@ -33,7 +33,7 @@ def add_new_recipe():
             print("Error! Please enter a whole number for servings:")
 
     # Enter ingredients
-    ingredients_str = input("Enter the ingredients (separated by commas):  ")
+    ingredients_str = input("Enter the ingredients (separated by commas):  \n")
     ingredients = ingredients_str.split(",")
 
     # Print the inforation back to the user for confirmation
