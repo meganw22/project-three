@@ -13,13 +13,15 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 
+
+
 def add_new_recipe():
     """
     Start command for adding a recipe to the Vault worksheet
     """
     # Enter recipe information
     print("Let's create a new recipe!")
-    recipe_name = input("Enter recipe name here:  ")
+    recipe_name = input("Enter recipe name here:  ").capitalize()
     
     # Enter a whole number for servings
     while True:
@@ -41,18 +43,16 @@ def add_new_recipe():
     print(f"Your ingredients are: {ingredients_str} \n")
 
     user_answer_recipe = input("Is this information correct? Yes/No\n").lower()
-
     return (recipe_name, servings, ingredients) if user_answer_recipe == "yes" else None
 
-def push_to_vault(recipe_data):
+def append_row_vault(recipe_data):
     """
     Appends a new row to the vault worksheet
     """
     ingredients_combo = ",".join(recipe_data[2])
-
     VAULT_WORKSHEET.append_row([recipe_data[0], recipe_data[1], ingredients_combo])
     
-def confirmation():
+def push_to_vault():
     """
     Confirms data and sends data to the vault worksheet
     """
@@ -60,10 +60,10 @@ def confirmation():
         recipe_data = add_new_recipe()
         if recipe_data:
             print("Updating your recipe database...\n")
-            push_to_vault(recipe_data)   
-            print("vault updated. Recipe added successfully")
+            append_row_vault(recipe_data)   
+            print("Vault updated. Recipe added successfully")
             break
         else:
             print("Recipe not added to database, please try again.")
 
-confirmation()
+push_to_vault()
