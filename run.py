@@ -11,6 +11,7 @@ CREDS = Credentials.from_service_account_file('creds.json')
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
+VAULT_WORKSHEET = SHEET.worksheet('vault')
 
 def add_new_recipe():
     """
@@ -30,33 +31,39 @@ def add_new_recipe():
             print("Error! Please enter a whole number for servings:")
 
     # Enter ingredients
-    ingredients = input("Enter the ingredients (separated by commas):  ")
+    ingredients_str = input("Enter the ingredients (separated by commas):  ")
+    ingredients = ingredients_str.split(",")
 
     # Print the inforation back to the user for confirmation
     print("\nThis is your new recipe:")
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
-    print(f"Your ingredients are: {ingredients} \n")
+    print(f"Your ingredients are: {ingredients_str} \n")
 
-    print("Is this information correct? Yes/No ")
-    user_answer_recipe = input().lower()
-    return user_answer_recipe
+    user_answer_recipe = input("Is this information correct? Yes/No\n").lower()
 
+    return (recipe_name, servings, ingredients) if user_answer_recipe == "yes" else None
+
+def push_to_vault(recipe_data):
+    """
+    Appends a new row to the vault worksheet
+    """
+    ingredients_combo = ",".join(recipe_data[2])
+
+    VAULT_WORKSHEET.append_row([recipe_data[0], recipe_data[1], ingredients_combo])
+    
 def confirmation():
     """
-    Create a loop to confirm if yes or no has been typed
+    Confirms data and sends data to the vault worksheet
     """
     while True:
-        user_answer_recipe = add_new_recipe()
-        if user_answer_recipe == "yes":
+        recipe_data = add_new_recipe()
+        if recipe_data:
+            print("Updating your recipe database...\n")
+            push_to_vault(recipe_data)   
+            print("vault updated. Recipe added successfully")
             break
         else:
-            print("")
-
-    
-def pull_vault_data():
-    """
-    Retrieve data from the vault worksheet
-    """
+            print("Recipe not added to database, please try again.")
 
 confirmation()
