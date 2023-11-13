@@ -13,8 +13,6 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 
-
-
 def add_new_recipe():
     """
     Start command for adding a recipe to the Vault worksheet
@@ -49,7 +47,7 @@ def append_row_vault(recipe_data):
     """
     Appends a new row to the vault worksheet
     """
-    ingredients_combo = ",".join(recipe_data[2])
+    ingredients_combo = ", ".join(recipe_data[2])
     VAULT_WORKSHEET.append_row([recipe_data[0], recipe_data[1], ingredients_combo])
     
 def push_to_vault():
@@ -66,4 +64,49 @@ def push_to_vault():
         else:
             print("Recipe not added to database, please try again.")
 
-push_to_vault()
+def find_recipe_name():
+    """  
+    Find item in the worksheet before updating or deleting
+    """   
+   # cell = VAULT_WORKSHEET.find("search_criteria", in_column=1)
+
+def update_recipe():
+    """
+    Update existing recipe in the worksheet
+    """
+
+def delete_recipe():
+    """
+    Find the recipe in the worksheet and delete row
+    """
+
+def main_menu():
+    while True:
+        print("Welcome to your online recipe book! Please choose from the following options to proceed:")
+        print("\nMain Menu")
+        print("1. Add Recipe")
+        print("2. Update Recipe")
+        print("3. Delete Recipe")
+        print("4. Find recipe by name")
+        print("#. View all recipe names")
+        print("5. Exit")
+
+        choice = input("Enter your menu choice (1-6): \n")
+
+        if choice == "1\n":
+            add_new_recipe()
+        elif choice == "2\n":
+            update_recipe()
+        elif choice == "3\n":
+            update_recipe()
+        elif choice == "4\n":
+            find_recipe_by_name()
+        elif choice == "5\n":
+            print("Exiting menu, bye babes...")
+            break
+        else:
+            print("Please pick a number between 1 and 6:")
+        
+if __name__ == "__main__":
+    main_menu()
+    push_to_vault()
