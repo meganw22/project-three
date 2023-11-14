@@ -71,8 +71,25 @@ def find_recipe_name():
         print(f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}")
         print(f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}")
         print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}")
-    except gspread.exceptions.CellNotFound:
+    except: 
         print(f"Recipe '{recipe_name_to_find}' not found")
+
+def view_all_recipes():
+    """
+    Full index of 'Recipe Names' for the user to view.
+    One Recipe per line
+    """
+    print("Recipes in the Vault: ")
+    column_index = 1
+    try:
+        all_recipes = VAULT_WORKSHEET.col_values(column_index)
+
+        for recipe_name in all_recipes:
+            print(f"Name: {recipe_name}")
+    
+    except Exception as e:
+        print(f"Error: {e}")
+
 
 def main_menu():
     while True:
@@ -81,7 +98,8 @@ def main_menu():
         print("2. Update Recipe")
         print("3. Delete Recipe")
         print("4. View a recipe")
-        print("5. Exit")
+        print("5. View all recipes by name")
+        print("6. Exit")
 
         choice = input("Enter your menu choice (1-5): \n")
 
@@ -94,6 +112,8 @@ def main_menu():
         elif choice == "4":
             find_recipe_name()
         elif choice == "5":
+            view_all_recipes()
+        elif choice == "6":
             print("Exiting menu, bye babes...")
             break
         else:
