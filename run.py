@@ -1,5 +1,8 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from colorama import init, Fore, Style
+
+init()
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -13,14 +16,11 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 
-def add_new_recipe():
-    """
-    Add a recipe to the Vault worksheet database
-    Confirms data and sends data to the vault worksheet
-    """
-    print("Let's create a new recipe!")
+def create_recipe_name():
+    print(Fore.RED + "Let's create a new recipe!" + Style.RESET_ALL)
     recipe_name = input("Enter recipe name here:  \n").capitalize()
-    
+
+def num_servings():
     while True:
         servings_str = input("Enter number of servings:  \n")
         # change serving number to an integer
@@ -30,11 +30,16 @@ def add_new_recipe():
         except ValueError:
             print("Error! Please enter a whole number for servings:")
 
+def enter_ingredients():
     # Enter ingredients
     ingredients_str = input("Enter the ingredients (separated by commas): \n")
     ingredients = ingredients_str.split(",")
 
-    # Print the inforation back to the user for confirmation
+def confirmation():
+    """
+    If 3x functions to add recipe name/serving no/ingredients list are correct, add to vault
+    """
+     # Print the inforation back to the user for confirmation
     print("\nThis is your new recipe:")
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
@@ -58,9 +63,9 @@ def delete_recipe():
     Find the recipe in the worksheet and delete row
     """
 
-def find_recipe_name():
+def specific_name():
     """  
-    Find item in the worksheet before updating or deleting
+    Find item in the worksheet by name (column 1 value)
     """   
     recipe_name_to_find = input("Enter recipe name to find: \n").capitalize()
 
@@ -95,22 +100,25 @@ def main_menu():
     while True:
         print("\nMain Menu")
         print("1. Add Recipe")
-        print("2. Update Recipe")
-        print("3. Delete Recipe")
-        print("4. View a recipe")
-        print("5. View all recipes by name")
+      #  print("2. Update Recipe")
+      #  print("3. Delete Recipe")
+        print("4. Find a specific recipe")
+        print("5. View all recipes")
         print("6. Exit")
 
-        choice = input("Enter your menu choice (1-5): \n")
+        choice = input("Enter your menu choice (1-6): \n")
 
         if choice == "1":
-            add_new_recipe()
-        elif choice == "2":
-            update_recipe()
-        elif choice == "3":
-            update_recipe()
+            create_recipe_name()
+            num_servings()
+            enter_ingredients()
+            confirmation()
+     #   elif choice == "2":
+     #      update_recipe()
+     #   elif choice == "3":
+     #       update_recipe()
         elif choice == "4":
-            find_recipe_name()
+            specific_name()
         elif choice == "5":
             view_all_recipes()
         elif choice == "6":
