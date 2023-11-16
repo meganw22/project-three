@@ -15,28 +15,42 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
+column_data = VAULT_WORKSHEET.col_values(1)
+
+# Function to check is a value is in the column data in the Vault Worksheet
+def search_duplicate(value, column_data):
+    return value in column_data
 
 
-def search_duplicate(recipe_name, column_1):
-    return recipe_name in column_1
+def create_recipe_name(column_data):
+    """
+    Gets the user input and checks if its a unique recipe name
 
+    """
+    while True:
+        recipe_name = input("Enter your unique recipe name here:  \n").lower()
+        if search_duplicate(recipe_name, column_data):
+            print(f"The recipe name '{recipe_name}' has already been used.")
+        else:
+            print(f"{recipe_name} is a new recipe.")
+            break
 
-def create_recipe_name():
-    #check vault worksheet, column 1 for duplicate recipes first
-    column_1 = VAULT_WORKSHEET.find(recipe_name, in_column=1)
-    recipe_name = input("Enter recipe name here:  \n").capitalize()
-    while search_duplicate(user_input, column_1):
-        print(Fore.RED + "Recipe already exists. Please choose a different name" + Style.RESET_ALL)
-        recipe_name = input("Enter recipe name here:  \n").capitalize()
-    num_servings()
 
 def num_servings():
+    """
+    Gets user input for number of servings per recipe
+    change serving number to an integer
+    ensure servings are not negative values
+    """
     while True:
         servings_str = input("Enter number of servings:  \n")
-        # change serving number to an integer
+        
         try:
             servings = int(servings_str)
-            break
+            if servings >= 0:
+                return servings
+            else:
+                print("Error! Servings cannot be a negative number")
         except ValueError:
             print("Error! Please enter a whole number for servings:")
 
@@ -45,7 +59,10 @@ def enter_ingredients():
     ingredients_str = input("Enter the ingredients (separated by commas): \n")
     ingredients = ingredients_str.split(",")
 
-def confirmation():
+def get_user_input():
+    
+
+def confirmation(recipe_name, servings, ingredients):
     """
     If 3x functions to add recipe name/serving no/ingredients list are correct, add to vault
     """
@@ -119,10 +136,10 @@ def main_menu():
         choice = input("Enter your menu choice (1-6): \n")
 
         if choice == "1":
-            create_recipe_name()
+            create_recipe_name(column_data)
             num_servings()
             enter_ingredients()
-            confirmation()
+            confirmation(recipe_name, servings, ingredients)
      #   elif choice == "2":
      #      update_recipe()
      #   elif choice == "3":
