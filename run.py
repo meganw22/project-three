@@ -18,7 +18,7 @@ VAULT_WORKSHEET = SHEET.worksheet('vault')
 column_data = VAULT_WORKSHEET.col_values(1)
 
 # Function to check if a value is in the column data in the Vault Worksheet
-def search_duplicate(value, column_data):
+def search_recipe(value, column_data):
     return value in column_data
 
 
@@ -28,7 +28,7 @@ def create_recipe_name(column_data):
     """
     while True:
         recipe_name = input("\nEnter your unique recipe name here:  \n").lower()
-        if search_duplicate(recipe_name, column_data):
+        if search_recipe(recipe_name, column_data):
             print(f"The recipe name '{recipe_name}' has already been used.")
         else:
            return recipe_name
@@ -52,6 +52,7 @@ def num_servings():
         except ValueError:
             print("Error! Please enter a whole number for servings:")
 
+
 def enter_ingredients():
     """
     User input of ingredients as strings
@@ -64,47 +65,104 @@ def enter_ingredients():
     return ingredients
 
 
-
-
-
-
-    
-
 def process_recipe(recipe_name, servings, ingredients):
     """
     Print recipe details back to the user
     """
-     # Print the inforation back to the user for confirmation
     print(Fore.GREEN + "\nThese are your recipe details:" )
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
     print(f"Your ingredients are: {ingredients} \n" + Style.RESET_ALL)
 
-def update_recipe():
-    """
-    Update existing recipe in the worksheet
-    """    
-
-def delete_recipe():
-    """
-    Find the recipe in the worksheet and delete row
-    """
 
 def specific_name():
     """  
     Find item in the worksheet by name (column 1 value)
     """   
-    recipe_name_to_find = input("Enter recipe name to find: \n").capitalize()
+    recipe_name_to_find = input("Enter recipe name: \n").lower()
 
     try:
         cell = VAULT_WORKSHEET.find(recipe_name_to_find, in_column=1)
-        print(f"recipe found on row {cell.row}")
-        print("Recipe Details:")
+       # print(f"recipe found on row {cell.row}")
+        print(Fore.GREEN + "\nRecipe Details:")
         print(f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}")
         print(f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}")
-        print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}")
+        print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}" + Style.RESET_ALL)
     except: 
         print(f"Recipe '{recipe_name_to_find}' not found")
+
+def update_recipe():
+    """
+    Update existing recipe in the worksheet
+    """
+    while True:
+        recipe_name_to_update = input("\nWhich recipe would you like to update?\n").lower()
+
+        try:
+            cell = VAULT_WORKSHEET.find(recipe_name_to_update, in_column=1)
+            print(f"Recipe found on row {cell.row}")
+
+            print("\n Which value do you want to change?")
+            print("1. Recipe name")
+            print("2. Number of servings")
+            print("3. Ingredients")
+            print("4. Cancel recipe update")
+
+            try:
+                choice = int(input("Enter your choice (1-4)\n"))
+                if 1 <= choice <= 4:
+                    print(f"You chose: {choice}")
+                else:
+                    print("Invalid choice! Please pick a number between 1 and 4")
+            except ValueError:
+                print("Error! Please pick a number between 1 and 4")
+
+            if choice == 1:
+                updated_name = input("Enter new name: ").strip()
+                VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
+                print("Updated successfully!")
+            elif choice == 2:
+                updated_servings = input("Enter new number of servings: ").strip()
+                VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
+                print("Updated successfully!")
+            elif choice == 3:
+                update_ingredients()
+                print("Updated successfully!")
+            elif choice == 4:
+                print("Recipe update cancelled")
+                return
+            else:
+                print("Error! Please pick a number between 1 and 3")
+            
+        except:
+            print(f"Recipe '{recipe_name_to_update}' not found, please try again.")
+
+
+
+def delete_recipe():
+    """
+    Find the recipe in the worksheet and delete row
+    """
+    while True:
+        recipe_name_to_delete = input("\nWhich recipe would you like to delete?\n").lower()
+        print("Please note: that if you delete a recipe, it cannot be restored")
+        try:
+            cell = VAULT_WORKSHEET.find(recipe_name_to_delete, in_column=1)
+            print(f"Recipe found on row {cell.row}")
+
+            delete_recipe = input("\n Are you sure you want to delete this recipe? (yes/no)").lower()
+            if delete == "yes":
+                VAULT_WORKSHEET.delete_row([recipe_name, servings, ingredients_combo])
+                print("Vault updated. Recipe Deleted\n")
+            elif delete == "no":
+                print("Recipe not deleted, returning to main menu")
+                return
+            else:
+                print("Invalid input. Please enter 'yes' or 'no'.")
+        except:
+            print("Oops, something went wrong, recipe NOT deleted!")
+
+
 
 def view_all_recipes():
     """
@@ -151,9 +209,10 @@ def main_menu():
                 else:
                     print("Recipe not added to database, restarting recipe entry... ")
         elif choice == "2":
-           update_recipe()
-        elif choice == "3":
+            
             update_recipe()
+        elif choice == "3":
+            delete_recipe()
         elif choice == "4":
             specific_name()
         elif choice == "5":
