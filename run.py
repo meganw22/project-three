@@ -27,11 +27,19 @@ def create_recipe_name(column_data):
     Gets the user input and checks if its a unique recipe name
     """
     while True:
-        recipe_name = input("\nEnter your unique recipe name here:  \n").lower()
-        if search_recipe(recipe_name, column_data):
-            print(f"The recipe name '{recipe_name}' has already been used.")
+        recipe_name = input("\nEnter your unique recipe name here: \n").lower()
+
+        if not recipe_name:
+            print("Don't leave blank! Add your recipe name here!")
+        elif search_recipe(recipe_name, column_data):
+            print(
+                f"The recipe name '{recipe_name}' has already been used. "
+                "Please enter a new recipe name!"
+                )
+
         else:
-           return recipe_name
+            print(f"{recipe_name} has been logged as new recipe name")
+            return recipe_name
 
 
 def num_servings():
@@ -59,6 +67,7 @@ def enter_ingredients():
     Format the ingredients
     """
     ingredients_str = input("Enter the ingredients (separated by commas): \n")
+    print("For example: 1 tsp sugar, 250g butter")
     ingredients_split = ingredients_str.split(",")
     ingredients = [ingredient.strip() for ingredient in ingredients_split]
     #print(f" Ingredients: {ingredients}")
@@ -89,14 +98,16 @@ def specific_name():
         print(f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}")
         print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}" + Style.RESET_ALL)
     except: 
-        print(f"Recipe '{recipe_name_to_find}' not found")
+        print(f"Recipe '{recipe_name_to_find}' not found" + Style.RESET_ALL)
 
 def update_recipe():
     """
     Update existing recipe in the worksheet
     """
     while True:
-        recipe_name_to_update = input("\nWhich recipe would you like to update?\n").lower()
+        recipe_name_to_update = input(
+            "\nWhich recipe would you like to update?\n"
+        ).lower()
 
         try:
             cell = VAULT_WORKSHEET.find(recipe_name_to_update, in_column=1)
@@ -183,13 +194,17 @@ def view_all_recipes():
 
 def main_menu():
     while True:
-        print("\nMain Menu")
-        print("1. Add Recipe")
-        print("2. Update Recipe")
-        print("3. Delete Recipe")
-        print("4. Find a specific recipe")
-        print("5. View all recipes")
-        print("6. Exit")
+        print(
+        """
+        \nMain Menu
+        1. Add Recipe
+        2. Update Recipe
+        3. Delete Recipe
+        4. Find a specific recipe
+        5. View all recipes
+        6. Exit
+        """
+        )
 
         choice = input("Enter your menu choice (1-6): \n")
 
@@ -206,8 +221,10 @@ def main_menu():
                     VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
                     print("Vault updated. Recipe added successfully\n")
                     break
+                elif details_correct == "no":
+                    print("Recipe not added to database")
                 else:
-                    print("Recipe not added to database, restarting recipe entry... ")
+                    print("Error! Input yes or no")
         elif choice == "2":
             
             update_recipe()
