@@ -17,7 +17,7 @@ SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 column_data = VAULT_WORKSHEET.col_values(1)
 
-# Function to check is a value is in the column data in the Vault Worksheet
+# Function to check if a value is in the column data in the Vault Worksheet
 def search_duplicate(value, column_data):
     return value in column_data
 
@@ -25,15 +25,13 @@ def search_duplicate(value, column_data):
 def create_recipe_name(column_data):
     """
     Gets the user input and checks if its a unique recipe name
-
     """
     while True:
-        recipe_name = input("Enter your unique recipe name here:  \n").lower()
+        recipe_name = input("\nEnter your unique recipe name here:  \n").lower()
         if search_duplicate(recipe_name, column_data):
             print(f"The recipe name '{recipe_name}' has already been used.")
         else:
-            print(f"{recipe_name} is a new recipe.")
-            break
+           return recipe_name
 
 
 def num_servings():
@@ -55,30 +53,32 @@ def num_servings():
             print("Error! Please enter a whole number for servings:")
 
 def enter_ingredients():
-    # Enter ingredients
+    """
+    User input of ingredients as strings
+    Format the ingredients
+    """
     ingredients_str = input("Enter the ingredients (separated by commas): \n")
-    ingredients = ingredients_str.split(",")
+    ingredients_split = ingredients_str.split(",")
+    ingredients = [ingredient.strip() for ingredient in ingredients_split]
+    #print(f" Ingredients: {ingredients}")
+    return ingredients
 
-def get_user_input():
+
+
+
+
+
     
 
-def confirmation(recipe_name, servings, ingredients):
+def process_recipe(recipe_name, servings, ingredients):
     """
-    If 3x functions to add recipe name/serving no/ingredients list are correct, add to vault
+    Print recipe details back to the user
     """
      # Print the inforation back to the user for confirmation
-    print("\nThis is your new recipe:")
+    print(Fore.GREEN + "\nThese are your recipe details:" )
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
-    print(f"Your ingredients are: {ingredients} \n")
-
-    user_answer_recipe = input("Is this information correct? Yes/No\n").lower()
-    if user_answer_recipe == "yes":
-        ingredients_combo = ", ".join(ingredients)
-        VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
-        print("Vault updated. Recipe added successfully\n")
-    else:
-            print("Recipe not added to database, please try again.")
+    print(f"Your ingredients are: {ingredients} \n" + Style.RESET_ALL)
 
 def update_recipe():
     """
@@ -127,8 +127,8 @@ def main_menu():
     while True:
         print("\nMain Menu")
         print("1. Add Recipe")
-      #  print("2. Update Recipe")
-      #  print("3. Delete Recipe")
+        print("2. Update Recipe")
+        print("3. Delete Recipe")
         print("4. Find a specific recipe")
         print("5. View all recipes")
         print("6. Exit")
@@ -136,14 +136,24 @@ def main_menu():
         choice = input("Enter your menu choice (1-6): \n")
 
         if choice == "1":
-            create_recipe_name(column_data)
-            num_servings()
-            enter_ingredients()
-            confirmation(recipe_name, servings, ingredients)
-     #   elif choice == "2":
-     #      update_recipe()
-     #   elif choice == "3":
-     #       update_recipe()
+            while True:
+                recipe_name = create_recipe_name(column_data)
+                servings = num_servings()
+                ingredients = enter_ingredients()
+                process_recipe(recipe_name, servings, ingredients)
+
+                details_correct = input("Is this information correct? Yes/No\n").lower()
+                if details_correct == "yes":
+                    ingredients_combo = ", ".join(ingredients)
+                    VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
+                    print("Vault updated. Recipe added successfully\n")
+                    break
+                else:
+                    print("Recipe not added to database, restarting recipe entry... ")
+        elif choice == "2":
+           update_recipe()
+        elif choice == "3":
+            update_recipe()
         elif choice == "4":
             specific_name()
         elif choice == "5":
@@ -152,7 +162,7 @@ def main_menu():
             print("Exiting menu, bye babes...")
             break
         else:
-            print("Please pick a number between 1 and 5:")
+            print("Please pick a number between 1 and 6:")
         
 if __name__ == "__main__":
     main_menu()
