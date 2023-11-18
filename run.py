@@ -21,7 +21,7 @@ column_data = VAULT_WORKSHEET.col_values(1)
 def search_recipe(value, column_data):
     """Check if a value is in the column data in the Vault Worksheet"""
     return value in column_data
-
+    
 
 def create_recipe_name(column_data):
     """Gets the user input and checks if its a unique recipe name"""
@@ -72,7 +72,6 @@ def num_servings():
                 "Don't leave blank! Enter the number of servings here:"
                 + Style.RESET_ALL
                 )
-
         else:
             print(
                 Fore.RED +
@@ -278,6 +277,7 @@ def update_servings(cell):
 
 def update_ingredients(cell):
     """Update ingredients"""
+    enter_ingredients()
     print(
         Fore.GREEN +
         "Ingredients updated successfully!"
@@ -423,19 +423,38 @@ def view_all_recipes():
     Full index of 'Recipe Names' for the user to view.
     One Recipe per line
     """
-    print(
-        Fore.BLUE +
-        "\nViewing all recipes in the Vault: "
-        + Style.RESET_ALL)
-    column_index = 1
-    try:
-        all_recipes = VAULT_WORKSHEET.col_values(column_index)[1:]
+    while True:
+        print(
+            Fore.BLUE +
+            "\nViewing all recipes in the Vault: "
+            + Style.RESET_ALL)
+        column_index = 1
+        try:
+            all_recipes = VAULT_WORKSHEET.col_values(column_index)[1:]
 
-        for recipe_name in all_recipes:
-            print(f"- {recipe_name}")
+            for recipe_name in all_recipes:
+                print(f"- {recipe_name}")
 
-    except Exception as e:
-        print(f"Error: {e}")
+            user_choice = input("Press 'enter' button on your keyboard"
+            " to return to the main menu\n")
+
+            if user_choice == '':
+                print(
+                    Fore.YELLOW +
+                    "Returning to the main menu..."
+                    + Style.RESET_ALL
+                    )
+                break
+
+            else:
+                print(
+                    Fore.RED +
+                    "Invalid input, please press the 'enter' button: "
+                    + Style.RESET_ALL
+                )
+
+        except Exception as e:
+            print(f"Error: {e}")
 
 
 def display_menu():
@@ -459,13 +478,13 @@ def get_menu_choice():
 
 def handle_add_recipe():
     """ Function for adding a complete new recipe to the Vault"""
+
+    recipe_name = create_recipe_name(column_data)
+    servings = num_servings()
+    ingredients = enter_ingredients()
+    process_recipe(recipe_name, servings, ingredients)
+
     while True:
-
-        recipe_name = create_recipe_name(column_data)
-        servings = num_servings()
-        ingredients = enter_ingredients()
-        process_recipe(recipe_name, servings, ingredients)
-
         details_correct = input(
             "Is this information correct? Yes/No \n"
             " or enter 'exit' to return to main menu: \n"
@@ -488,8 +507,10 @@ def handle_add_recipe():
             print(
                 Fore.RED +
                 f"Your new recipe was not added to database"
+                "\n Returning to main menu..."
                 + Style.RESET_ALL
                 )
+            break
 
         elif details_correct == "exit":
             print(
@@ -502,9 +523,16 @@ def handle_add_recipe():
         else:
             print(
                 Fore.RED +
-                "Error! please input 'yes' or 'no'"
+                "Error! Please enter 'yes' or 'no'"
                 + Style.RESET_ALL
-                )
+            )
+
+    else:
+        print(
+            Fore.RED +
+            "Error! please input 'yes' or 'no'"
+            + Style.RESET_ALL
+            )
 
 
 def handle_update_recipe():
@@ -546,7 +574,7 @@ def main_menu():
         elif choice == "6":
             print(
                 Fore.YELLOW +
-                "Exiting menu, See you later!"
+                "Exiting the program, See you later!"
                 + Style.RESET_ALL
             )
             break
