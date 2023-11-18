@@ -201,10 +201,8 @@ def display_recipe_details(cell, recipe_to_update):
     print(
         f"Recipe Name: {display_recipe_name}\n"
         f"Servings: {display_servings}\n"
-        "Ingredients:"
+        f"Ingredients: {display_ingredients}\n"
     )
-    for ingredient in display_ingredients:
-        print(f"- {ingredient}")
 
 
 def update_recipe_menu():
@@ -276,14 +274,39 @@ def update_servings(cell):
 
 
 def update_ingredients(cell):
-    """Update ingredients"""
-    enter_ingredients()
+    """User input to update existing ingredients"""
+    while True:
+        updated_ingr_str = input(
+            Fore.BLUE +
+            "\n Copy your previous list of ingredients from above "
+            "(without [ ]) and edit as you require"
+            + Style.RESET_ALL +
+            "\n Please enter the updated ingredients "
+            "(separated by commas): \n"
+            "For example: 200g self-raising flour, 3 large eggs\n"
+            ).lower()
+
+        if not updated_ingr_str:
+            print(
+                Fore.RED +
+                "Don't leave blank! "
+                "Enter your ingredients here:"
+                + Style.RESET_ALL
+            )
+        else:
+            updated_ingr_split = updated_ingr_str.split(",")
+            updated_ingredients = [
+                ingredient.strip() for ingredient in updated_ingr_split
+            ]
+            VAULT_WORKSHEET.update_cell(cell.row, 3, updated_ingr_str)
+            break
+
     print(
         Fore.GREEN +
         "Ingredients updated successfully!"
         + Style.RESET_ALL
     )
-
+    return updated_ingredients
 
 def change_recipe_details(cell, recipe_to_update):
     """
