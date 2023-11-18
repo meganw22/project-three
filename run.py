@@ -21,7 +21,7 @@ column_data = VAULT_WORKSHEET.col_values(1)
 def search_recipe(value, column_data):
     """Check if a value is in the column data in the Vault Worksheet"""
     return value in column_data
-    
+
 
 def create_recipe_name(column_data):
     """Gets the user input and checks if its a unique recipe name"""
@@ -308,6 +308,7 @@ def update_ingredients(cell):
     )
     return updated_ingredients
 
+
 def change_recipe_details(cell, recipe_to_update):
     """
     User input overwrites the current recipe details as specified by user,
@@ -458,8 +459,10 @@ def view_all_recipes():
             for recipe_name in all_recipes:
                 print(f"- {recipe_name}")
 
-            user_choice = input("Press 'enter' button on your keyboard"
-            " to return to the main menu\n")
+            user_choice = input(
+                "Press 'enter' button on your keyboard"
+                " to return to the main menu\n"
+                )
 
             if user_choice == '':
                 print(
