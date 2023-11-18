@@ -174,6 +174,10 @@ def specific_name():
         except:
             print(Fore.RED + f"Recipe '{recipe_to_find}' not found" + Style.RESET_ALL)
 
+def display_recipe_details(cell, recipe_to_update):
+    """ Display the current receip details when called"""
+    
+
 def update_recipe_menu():
     """
     Update existing recipe in the worksheet
@@ -240,7 +244,9 @@ def change_recipe_details(cell, recipe_to_update):
     current_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
     print(
         Fore.GREEN + 
-        f"{current_recipe_name, current_servings, current_ingredients}"
+        f" Recipe Name: {current_recipe_name},\n" 
+        f" Servings: {current_servings}, "
+        f" Ingredients: {current_ingredients}"
         + Style.RESET_ALL
         )
 
@@ -257,16 +263,28 @@ def change_recipe_details(cell, recipe_to_update):
     if choice == 1:
         updated_name = input("Enter new name: ").strip()
         VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
-        print("Updated successfully!")
+        print(
+            Fore.GREEN +
+            "Recipe name updated successfully!"
+            + Style.RESET_ALL
+            )
 
     elif choice == 2:
         updated_servings = input("Enter new number of servings: ").strip()
         VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
-        print("Updated successfully!")
+        print(
+            Fore.GREEN +
+            "Number of servings updated successfully!"
+            + Style.RESET_ALL
+            )
 
     elif choice == 3:
         update_ingredients()
-        print("Updated successfully!")
+        print(
+            Fore.GREEN +
+            "Ingredients updated successfully!"
+            + Style.RESET_ALL
+            )
 
     elif choice == 4:
         print(
@@ -276,8 +294,19 @@ def change_recipe_details(cell, recipe_to_update):
             )
         return
     else:
-        print("Error! Please pick a number between 1 and 3")
+        print("Error! Please pick a number between 1 and 4")
 
+    print(f"These are the updated recipe details for '{recipe_to_update}'")
+    updated_recipe_name = VAULT_WORKSHEET.cell(cell.row, 1).value
+    updated_servings = VAULT_WORKSHEET.cell(cell.row, 2).value
+    updated_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
+    print(
+        Fore.GREEN + 
+        f"Recipe Name: {updated_recipe_name}\n" 
+        f"Servings: {updated_servings}\n "
+        f"Ingredients: {updated_ingredients}"
+        + Style.RESET_ALL
+        )
 
 def delete_recipe():
     """
@@ -329,7 +358,10 @@ def view_all_recipes():
     Full index of 'Recipe Names' for the user to view.
     One Recipe per line
     """
-    print("\nViewing all recipes in the Vault: ")
+    print(
+        Fore.BLUE +
+        "\nViewing all recipes in the Vault: "
+        + Style.RESET_ALL)
     column_index = 1
     try:
         all_recipes = VAULT_WORKSHEET.col_values(column_index)[1:]
@@ -344,7 +376,7 @@ def view_all_recipes():
 def display_menu():
         print(
         """
-        \nMain Menu
+        Main Menu
         1. Add Recipe
         2. Update Recipe
         3. Delete Recipe
@@ -359,7 +391,7 @@ def get_menu_choice():
     return input("Enter your menu choice (1-6): \n")
 
 def handle_add_recipe():
-    """ Function for adding a new recipe """
+    """ Function for adding a complete new recipe to the Vault"""
     while True:
 
         recipe_name = create_recipe_name(column_data)
@@ -437,10 +469,18 @@ def main_menu():
         elif choice == "5":
             handle_view_all_recipes()
         elif choice == "6":
-            print("Exiting menu, see you later!")
+            print(
+                Fore.YELLOW +
+                "Exiting menu, See you later!"
+                + Style.RESET_ALL
+            )
             break
         else:
-            print(Fore.RED + f"Error! '{choice}' is not a number between " 
-            "1 and 6. Please try again!" + Style.RESET_ALL)
+            print(
+                Fore.RED + 
+                f"Error! '{choice}' is not a number between " 
+                "1 and 6. Please try again!" 
+                + Style.RESET_ALL
+            )
 
 main_menu()
