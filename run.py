@@ -15,15 +15,15 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
-column_data = VAULT_WORKSHEET.col_values(1)
+COLUMN_DATA = VAULT_WORKSHEET.col_values(1)
 
 
-def search_recipe(value, column_data):
+def search_recipe(value, COLUMN_DATA):
     """Check if a value is in the column data in the Vault Worksheet"""
-    return value in column_data
+    return value in COLUMN_DATA
 
 
-def create_recipe_name(column_data):
+def create_recipe_name(COLUMN_DATA):
     """Gets the user input and checks if its a unique recipe name"""
     while True:
         recipe_name = input(
@@ -37,7 +37,7 @@ def create_recipe_name(column_data):
                 "Don't leave blank! Add your recipe name here: "
                 + Style.RESET_ALL
                 )
-        elif search_recipe(recipe_name, column_data):
+        elif search_recipe(recipe_name, COLUMN_DATA):
             print(
                 Fore.RED +
                 f"The recipe name '{recipe_name}' has already been used. "
@@ -212,6 +212,8 @@ def update_recipe_menu():
     If attempts unsuccessful, all current recipes are printed to terminal
     in a list format for user guidance.
     """
+    global COLUMN_DATA
+
     attempts = 1
     max_attempts = 2
     while attempts <= max_attempts:
@@ -222,12 +224,12 @@ def update_recipe_menu():
             ).lower()
         cell = VAULT_WORKSHEET.find(recipe_to_update, in_column=1)
 
-        if search_recipe(recipe_to_update, column_data):
+        if search_recipe(recipe_to_update, COLUMN_DATA):
             print(
                 f"Recipe {recipe_to_update} has been found on row {cell.row}"
                 )
             change_recipe_details(cell, recipe_to_update)
-            column_data = VAULT_WORKSHEET.col_values(1)
+            COLUMN_DATA = VAULT_WORKSHEET.col_values(1)
             break
 
         elif not recipe_to_update.strip():
@@ -506,7 +508,7 @@ def get_menu_choice():
 def handle_add_recipe():
     """ Function for adding a complete new recipe to the Vault"""
 
-    recipe_name = create_recipe_name(column_data)
+    recipe_name = create_recipe_name(COLUMN_DATA)
     servings = num_servings()
     ingredients = enter_ingredients()
     process_recipe(recipe_name, servings, ingredients)
