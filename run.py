@@ -159,31 +159,29 @@ def update_recipe_menu():
     while attempts <= max_attempts :
         recipe_to_update = input("\nWhich recipe would you like to update?\n").lower()
         cell = VAULT_WORKSHEET.find(recipe_to_update, in_column=1)
-        while True:
-            if search_recipe(recipe_to_update, column_data):
-                print(f"Recipe found on row {cell.row}")
-                change_recipe_details()
-            elif not recipe_to_update.strip():
-                print(
-                        Fore.RED +
-                        "Don't leave blank! Enter your recipe name here: "
-                        + Style.RESET_ALL
-                        )
-            else:
-                if attempts < max_attempts: 
-                    print(Fore.RED + f"Recipe '{recipe_to_update}' not found, " 
+
+        if search_recipe(recipe_to_update, column_data):
+            print(f"Recipe found on row {cell.row}")
+            change_recipe_details()
+            break
+        elif not recipe_to_update.strip():
+            print(
+                    Fore.RED +
+                    "Don't leave blank! Enter your recipe name here: "
+                    + Style.RESET_ALL
+                    )
+        else:
+            if attempts < max_attempts: 
+                print(Fore.RED + f"Recipe '{recipe_to_update}' not found, " 
                 + Style.RESET_ALL)
-                elif not recipe_to_update.strip():
-                    print(
-                        Fore.RED +
-                        "Don't leave blank! Enter your recipe name here: "
-                        + Style.RESET_ALL
-                        )
-                else:
-                    print("Here are all the available recipes:\n")
-                    view_all_recipes()
-                    break
                 attempts += 1
+            else:
+                print(Fore.BLUE + "Here are all the available recipes:")
+                view_all_recipes()
+                print(Style.RESET_ALL)
+                print("please choose a recipe from the list to continue...")
+                continue
+            
 
 
 def change_recipe_details():
