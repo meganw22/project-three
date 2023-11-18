@@ -17,6 +17,7 @@ SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 column_data = VAULT_WORKSHEET.col_values(1)
 
+
 # Function to 
 def search_recipe(value, column_data):
     """Check if a value is in the column data in the Vault Worksheet"""
@@ -80,7 +81,7 @@ def enter_ingredients():
     while True:
         ingredients_str = input("\n Please enter the ingredients " 
         "(separated by commas): \n"
-        "For example: 175g self-raising flour, 2 large eggs\n")
+        "For example: 175g self-raising flour, 2 large eggs\n").lower()
 
         if not ingredients_str:
             print(
@@ -107,65 +108,70 @@ def specific_name():
     """  
     Find item in the worksheet by name (column 1 value)
     """   
-    recipe_name_to_find = input("Enter recipe name: \n").lower()
+    recipe_to_find = input("Enter recipe name: \n").lower()
 
     try:
-        cell = VAULT_WORKSHEET.find(recipe_name_to_find, in_column=1)
-       # print(f"recipe found on row {cell.row}")
         print(Fore.GREEN + "\nRecipe Details:")
         print(f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}")
         print(f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}")
         print(f"Ingredients: {VAULT_WORKSHEET.cell(cell.row, 3).value}" + Style.RESET_ALL)
     except: 
-        print(f"Recipe '{recipe_name_to_find}' not found" + Style.RESET_ALL)
+        print(f"Recipe '{recipe_to_find}' not found" + Style.RESET_ALL)
 
-def update_recipe():
+def update_recipe_menu():
     """
     Update existing recipe in the worksheet
     """
-    while True:
-        recipe_name_to_update = input(
-            "\nWhich recipe would you like to update?\n"
-        ).lower()
-
-        try:
-            cell = VAULT_WORKSHEET.find(recipe_name_to_update, in_column=1)
+    attempts = 1
+    while attempts < 2:
+        recipe_to_update = input("\nWhich recipe would you like to update?\n").lower()
+        if search_recipe(recipe_to_update, column_data):
             print(f"Recipe found on row {cell.row}")
+            change_recipe_details()
+        elif not recipe_to_update.strip():
+            print(
+                    Fore.RED +
+                    "Don't leave blank! Enter your recipe name here: "
+                    + Style.RESET_ALL
+                    )
+        else:
+            print(Fore.RED + f"Recipe '{recipe_to_update}' not found, " 
+            + Style.RESET_ALL + "Here are all the available recipes:\n")
+            view_all_recipes()
+            attempts += 1
 
-            print("\n Which value do you want to change?")
-            print("1. Recipe name")
-            print("2. Number of servings")
-            print("3. Ingredients")
-            print("4. Cancel recipe update")
+def change_recipe_details():
+    print(
+    "\n Which value do you want to change?\n"
+    "1. Recipe name\n"
+    "2. Number of servings\n"
+    "3. Ingredients\n"
+    "4. Cancel recipe update\n")
 
-            try:
-                choice = int(input("Enter your choice (1-4)\n"))
-                if 1 <= choice <= 4:
-                    print(f"You chose: {choice}")
-                else:
-                    print("Invalid choice! Please pick a number between 1 and 4")
-            except ValueError:
-                print("Error! Please pick a number between 1 and 4")
+    choice = int(input("Enter your choice (1-4)\n"))
+    if 1 <= choice <= 4:
+        print(f"You chose: {choice}")
+    else:
+        print("Invalid choice! Please pick a number between 1 and 4")
 
-            if choice == 1:
-                updated_name = input("Enter new name: ").strip()
-                VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
-                print("Updated successfully!")
-            elif choice == 2:
-                updated_servings = input("Enter new number of servings: ").strip()
-                VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
-                print("Updated successfully!")
-            elif choice == 3:
-                update_ingredients()
-                print("Updated successfully!")
-            elif choice == 4:
-                print("Recipe update cancelled")
-                return
-            else:
-                print("Error! Please pick a number between 1 and 3")
-            
-        except:
-            print(f"Recipe '{recipe_name_to_update}' not found, please try again.")
+    if choice == 1:
+        updated_name = input("Enter new name: ").strip()
+        VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
+        print("Updated successfully!")
+    elif choice == 2:
+        updated_servings = input("Enter new number of servings: ").strip()
+        VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
+        print("Updated successfully!")
+    elif choice == 3:
+        update_ingredients()
+        print("Updated successfully!")
+    elif choice == 4:
+        print(Fore.RED + 
+            "Recipe update cancelled. Returning to Main Menu"
+            + Style.RESET_ALL)
+        return
+    else:
+        print("Error! Please pick a number between 1 and 3")
 
 
 
@@ -255,7 +261,7 @@ def main_menu():
                         "Error! please input 'yes' or 'no'"
                         + Style.RESET_ALL)
         elif choice == "2":
-            update_recipe()
+            update_recipe_menu()
         elif choice == "3":
             delete_recipe()
         elif choice == "4":
