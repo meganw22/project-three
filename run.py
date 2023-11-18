@@ -227,6 +227,7 @@ def update_recipe_menu():
                 f"Recipe {recipe_to_update} has been found on row {cell.row}"
                 )
             change_recipe_details(cell, recipe_to_update)
+            column_data = VAULT_WORKSHEET.col_values(1)
             break
 
         elif not recipe_to_update.strip():
@@ -279,7 +280,7 @@ def update_ingredients(cell):
         updated_ingr_str = input(
             Fore.BLUE +
             "\n Copy your previous list of ingredients from above "
-            "(without [ ]) and edit as you require"
+            "(without [' ']) and edit as you require"
             + Style.RESET_ALL +
             "\n Please enter the updated ingredients "
             "(separated by commas): \n"
