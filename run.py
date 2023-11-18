@@ -126,8 +126,35 @@ def specific_name():
     while True:
         recipe_to_find = input("Enter recipe name: \n").lower()
         cell = VAULT_WORKSHEET.find(recipe_to_find, in_column=1)
+        if cell:
+            print(Fore.YELLOW +
+                "Please wait while your recipe loads..."
+                + Style.RESET_ALL)
+            display_recipe_details(cell, recipe_to_update=False)
 
-        if not recipe_to_find.strip():
+            while True:
+                user_choice = input(
+                    "\nWhat would you like to do?"
+                    "\n1. Find another recipe"
+                    "\n2. Return to the main menu"
+                    "\nEnter your choice (1 or 2):\n"
+                    )
+                if user_choice == '1':
+                    specific_name()
+                    continue
+                elif user_choice == '2':
+                    print(Fore.YELLOW +
+                        "Returning to Main Menu..."
+                        + Style.RESET_ALL)
+                    return
+                else:
+                    print(
+                        Fore.RED +
+                        "Invalid choice, please pick 1 or 2"
+                        + Style.RESET_ALL
+                    )
+
+        elif not recipe_to_find.strip():
             print(
                 Fore.RED +
                 "Don't leave blank! Enter a recipe here:"
@@ -135,44 +162,7 @@ def specific_name():
                 )
             continue
 
-        if recipe_to_find.lower() == 'exit':
-            print("Returning to the main menu.")
-            break
-
-        try:
-            print("\nThese are the recipe details:")
-            print(
-                Fore.BLUE +
-                f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}"
-                )
-            print(
-                f"Servings: {VAULT_WORKSHEET.cell(cell.row, 2).value}"
-                )
-
-            ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
-            print("Ingredients:")
-            for ingredient in ingredients:
-                print(f"- {ingredient}")
-            print(Style.RESET_ALL)
-
-            user_choice = input(
-                "\nWhat would you like to do?"
-                "\n1. Find another recipe"
-                "\n2. Return to the main menu"
-                "\nEnter your choice (1 or 2):\n "
-                )
-            if user_choice == '1':
-                continue
-            elif user_choice == '2':
-                print("Returning to Main Menu...")
-                break
-            else:
-                print(
-                    Fore.RED +
-                    "Invalid choice, please pick 1 or 2"
-                    + Style.RESET_ALL
-                    )
-        except ValueError:
+        else:
             print(
                 Fore.RED +
                 f"Recipe '{recipe_to_find}' not found"
@@ -266,7 +256,6 @@ def update_servings(cell):
 
 def update_ingredients(cell):
     """Update ingredients"""
-
     print(
         Fore.GREEN +
         "Ingredients updated successfully!"
@@ -314,7 +303,7 @@ def change_recipe_details(cell, recipe_to_update):
                     break
                 elif choice == 4:
                     print(
-                        Fore.RED +
+                        Fore.YELLOW +
                         "Recipe update cancelled. Returning to Main Menu..."
                         + Style.RESET_ALL
                     )
@@ -377,13 +366,17 @@ def delete_recipe():
                         "and Vault updated\n"
                         + Style.RESET_ALL
                         )
-                    print("/nNow returning you to the main menu...")
+                    print(Fore.YELLOW +
+                        "/nNow returning you to the main menu..."
+                        + Style.RESET_ALL)
                     return
 
                 elif delete_recipe_input == "no":
                     print(
                         f"\nYou chose not to delete '{recipe_name_to_delete}.'"
-                        "\nNow returning you to the main menu...")
+                        + Fore.YELLOW +
+                        "\nNow returning you to the main menu..."
+                        + Style.RESET_ALL)
                     return
 
                 else:
