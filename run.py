@@ -17,28 +17,32 @@ SHEET = GSPREAD_CLIENT.open('project_three')
 VAULT_WORKSHEET = SHEET.worksheet('vault')
 column_data = VAULT_WORKSHEET.col_values(1)
 
-# Function to check if a value is in the column data in the Vault Worksheet
+# Function to 
 def search_recipe(value, column_data):
+    """Check if a value is in the column data in the Vault Worksheet"""
     return value in column_data
 
 
 def create_recipe_name(column_data):
-    """
-    Gets the user input and checks if its a unique recipe name
-    """
+    """Gets the user input and checks if its a unique recipe name"""
     while True:
-        recipe_name = input("\nEnter your unique recipe name here: \n").lower()
+        recipe_name = input("\nEnter your unique recipe name here: "
+        "\nExample: 'Shepherds Pie' or 'Banana Smoothie no. 3'\n").lower()
 
         if not recipe_name:
-            print("Don't leave blank! Add your recipe name here!")
+            print(
+                Fore.RED +
+                "Don't leave blank! Add your recipe name here: "
+                + Style.RESET_ALL
+                )
         elif search_recipe(recipe_name, column_data):
             print(
+                Fore.RED +
                 f"The recipe name '{recipe_name}' has already been used. "
-                "Please enter a new recipe name!"
+                "Please enter a new recipe name!" + Style.RESET_ALL
                 )
-
         else:
-            print(f"{recipe_name} has been logged as new recipe name")
+            print(f"You have called your recipe: {recipe_name}")
             return recipe_name
 
 
@@ -49,29 +53,44 @@ def num_servings():
     ensure servings are not negative values
     """
     while True:
-        servings_str = input("Enter number of servings:  \n")
-        
-        try:
+        servings_str = input("\nEnter number of servings:  \n")
+        if servings_str.isdigit():
             servings = int(servings_str)
-            if servings >= 0:
+            if servings > 0:
                 return servings
             else:
-                print("Error! Servings cannot be a negative number")
-        except ValueError:
-            print("Error! Please enter a whole number for servings:")
+                print(Fore.RED + "Error! Servings cannot be less than 1 "
+                "Please try again" + Style.RESET_ALL)
+        elif not servings_str.strip():
+            print(
+                Fore.RED + "Don't leave blank! " 
+                "Enter the number of servings here:" + Style.RESET_ALL
+                )
+            
+        else:
+            print(Fore.RED + "Error! Please enter a valid "
+            "whole number for servings:" + Style.RESET_ALL)
 
 
 def enter_ingredients():
+    """ 
+    User input of ingredients as strings and format the ingredients
+    additional: if user has entered one only ingredient, confirm choice
     """
-    User input of ingredients as strings
-    Format the ingredients
-    """
-    ingredients_str = input("Enter the ingredients (separated by commas): \n")
-    print("For example: 1 tsp sugar, 250g butter")
-    ingredients_split = ingredients_str.split(",")
-    ingredients = [ingredient.strip() for ingredient in ingredients_split]
-    #print(f" Ingredients: {ingredients}")
-    return ingredients
+    while True:
+        ingredients_str = input("\n Please enter the ingredients " 
+        "(separated by commas): \n"
+        "For example: 175g self-raising flour, 2 large eggs\n")
+
+        if not ingredients_str:
+            print(
+                    Fore.RED + "Don't leave blank! " 
+                    "Enter your ingredients here:" + Style.RESET_ALL
+                    )
+        else:
+            ingredients_split = ingredients_str.split(",")
+            ingredients = [ingredient.strip() for ingredient in ingredients_split]
+            return ingredients
 
 
 def process_recipe(recipe_name, servings, ingredients):
@@ -215,18 +234,27 @@ def main_menu():
                 ingredients = enter_ingredients()
                 process_recipe(recipe_name, servings, ingredients)
 
-                details_correct = input("Is this information correct? Yes/No\n").lower()
+                details_correct = input("Is this information correct? Yes/No \n"
+                "   or enter 'exit' to return to main menu: \n").lower()
                 if details_correct == "yes":
                     ingredients_combo = ", ".join(ingredients)
                     VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
-                    print("Vault updated. Recipe added successfully\n")
+                    print(Fore.GREEN + 
+                        "Vault updated. Recipe added successfully!!\n"
+                        "Returning to main menu..."
+                        + Style.RESET_ALL)
                     break
                 elif details_correct == "no":
-                    print("Recipe not added to database")
+                    print(f"You chose '{choice}', your new recipe was not "
+                    "added to database")
+                elif details_correct == "exit":
+                    print("Returning to main menu...")
+                    break
                 else:
-                    print("Error! Input yes or no")
+                    print(Fore.RED +
+                        "Error! please input 'yes' or 'no'"
+                        + Style.RESET_ALL)
         elif choice == "2":
-            
             update_recipe()
         elif choice == "3":
             delete_recipe()
@@ -238,7 +266,8 @@ def main_menu():
             print("Exiting menu, bye babes...")
             break
         else:
-            print("Please pick a number between 1 and 6:")
+            print(Fore.RED + f"Error! '{choice}' is not a number between " 
+            "1 and 6. Please try again!" + Style.RESET_ALL)
         
 if __name__ == "__main__":
     main_menu()
