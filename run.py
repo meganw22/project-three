@@ -188,14 +188,12 @@ def display_recipe_details(cell, recipe_to_update):
     display_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
 
     print(
-        Fore.GREEN +
         f"Recipe Name: {display_recipe_name}\n"
         f"Servings: {display_servings}\n"
         "Ingredients:"
     )
     for ingredient in display_ingredients:
         print(f"- {ingredient}")
-        print(Style.RESET_ALL)
 
 
 def update_recipe_menu():
@@ -216,7 +214,9 @@ def update_recipe_menu():
         cell = VAULT_WORKSHEET.find(recipe_to_update, in_column=1)
 
         if search_recipe(recipe_to_update, column_data):
-            print(f"Recipe has been found on row {cell.row}")
+            print(
+                f"Recipe {recipe_to_update} has been found on row {cell.row}"
+                )
             change_recipe_details(cell, recipe_to_update)
             break
 
@@ -295,7 +295,7 @@ def change_recipe_details(cell, recipe_to_update):
         "1. Recipe name\n"
         "2. Number of servings\n"
         "3. Ingredients\n"
-        "4. Cancel recipe update\n"
+        "4. Cancel recipe update and return to main menu\n"
     )
 
     while True:
@@ -344,39 +344,61 @@ def delete_recipe():
             + Style.RESET_ALL +
             Fore.RED +
             "Please note: that if you delete a recipe, it cannot be restored"
-            + Style.RESET_ALL
+            + Style.RESET_ALL +
+            "\nEnter recipe to delete here:\n"
         ).lower()
 
-        try:
-            cell = VAULT_WORKSHEET.find(recipe_name_to_delete, in_column=1)
+        cell = None
+
+        # Check if the recipe exists
+        for row in VAULT_WORKSHEET.findall(recipe_name_to_delete, in_column=1):
+            cell = row
+            break
+
+        if cell:
             print(f"Recipe is currently on row {cell.row}\n")
+            while True:
 
-            delete_recipe_input = input(
-                f"You are about to delete the recipe '{recipe_name_to_delete}'"
-                "\nAre you sure you want to delete the recipe? (yes/no)\n"
-                "If you choose 'no' you will be returned to the Main Menu:\n"
-                ).lower()
+                delete_recipe_input = input(
+                    Fore.BLUE +
+                    "You are about to delete the "
+                    f"recipe '{recipe_name_to_delete}'"
+                    "\nAre you sure you want to delete the recipe? (yes/no)\n"
+                    + Style.RESET_ALL +
+                    "If you choose 'no' "
+                    "you will be returned to the Main Menu:\n"
+                    ).lower()
 
-            if delete_recipe_input == "yes":
-                VAULT_WORKSHEET.delete_rows(cell.row)
-                print(
-                    Fore.GREEN +
-                    "Recipe has been successfully deleted, and Vault updated\n"
-                    + Style.RESET_ALL
-                    )
-                print("/nNow returning you to the main menu...")
-                break
+                if delete_recipe_input == "yes":
+                    VAULT_WORKSHEET.delete_rows(cell.row)
+                    print(
+                        Fore.GREEN +
+                        "Recipe has been successfully deleted, "
+                        "and Vault updated\n"
+                        + Style.RESET_ALL
+                        )
+                    print("/nNow returning you to the main menu...")
+                    return
 
-            elif delete_recipe_input == "no":
-                print(f"You chose not to delete {recipe_name_to_delete}. \n"
-                    "Now returning to main menu...")
-                break
+                elif delete_recipe_input == "no":
+                    print(
+                        f"\nYou chose not to delete '{recipe_name_to_delete}.'"
+                        "\nNow returning you to the main menu...")
+                    return
 
-            else:
-                print("Invalid input. Please enter 'yes' or 'no'.")
-        except ValueError:
-            print("Oops, it appears there's no recipe with the "
-            f"name '{recipe_name_to_delete}', Please try another name!")
+                else:
+                    print(
+                        Fore.RED +
+                        "\nInvalid input. Please enter 'yes' or 'no'.\n"
+                        + Style.RESET_ALL
+                        )
+        else:
+            print(
+                Fore.RED +
+                "Oops, it appears there's no recipe with the "
+                f"name '{recipe_name_to_delete}', Please try another name!"
+                + Style.RESET_ALL
+            )
 
 
 def view_all_recipes():
