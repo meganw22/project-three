@@ -123,13 +123,31 @@ def specific_name():
     Find item in the Vault worksheet by name
     List recipe details and print ingredients as a list.
     """
+
     while True:
-        recipe_to_find = input("Enter recipe name: \n").lower()
+        recipe_to_find = input(
+            Fore.BLUE +
+            "Enter recipe name here: "
+            "(type 'exit' to return to main menu)\n"
+            + Style.RESET_ALL
+        ).lower()
+
+        if recipe_to_find == 'exit':
+            print(
+                Fore.YELLOW +
+                "Returning to Main Menu..."
+                + Style.RESET_ALL
+                )
+            return
+
         cell = VAULT_WORKSHEET.find(recipe_to_find, in_column=1)
+
         if cell:
-            print(Fore.YELLOW +
+            print(
+                Fore.YELLOW +
                 "Please wait while your recipe loads..."
-                + Style.RESET_ALL)
+                + Style.RESET_ALL
+                )
             display_recipe_details(cell, recipe_to_update=False)
 
             while True:
@@ -140,13 +158,17 @@ def specific_name():
                     "\nEnter your choice (1 or 2):\n"
                     )
                 if user_choice == '1':
+                    print("You asked to find a new recipe:")
                     specific_name()
                     continue
                 elif user_choice == '2':
-                    print(Fore.YELLOW +
-                        "Returning to Main Menu..."
-                        + Style.RESET_ALL)
-                    return
+                    print(
+                        Fore.YELLOW +
+                        "Returning to 'find specific recipe' menu..."
+                        + Style.RESET_ALL
+                    )
+                    return_to_main_menu = True
+                    break
                 else:
                     print(
                         Fore.RED +
@@ -366,9 +388,11 @@ def delete_recipe():
                         "and Vault updated\n"
                         + Style.RESET_ALL
                         )
-                    print(Fore.YELLOW +
+                    print(
+                        Fore.YELLOW +
                         "/nNow returning you to the main menu..."
-                        + Style.RESET_ALL)
+                        + Style.RESET_ALL
+                        )
                     return
 
                 elif delete_recipe_input == "no":
@@ -416,7 +440,7 @@ def view_all_recipes():
 
 def display_menu():
     print(
-    """
+        """
     Main Menu
     1. Add Recipe
     2. Update Recipe
@@ -442,8 +466,10 @@ def handle_add_recipe():
         ingredients = enter_ingredients()
         process_recipe(recipe_name, servings, ingredients)
 
-        details_correct = input("Is this information correct? Yes/No \n"
-            "   or enter 'exit' to return to main menu: \n").lower()
+        details_correct = input(
+            "Is this information correct? Yes/No \n"
+            " or enter 'exit' to return to main menu: \n"
+            ).lower()
 
         if details_correct == "yes":
             ingredients_combo = ", ".join(ingredients)
@@ -453,6 +479,7 @@ def handle_add_recipe():
             print(
                 Fore.GREEN +
                 "Vault updated. Recipe added successfully!!\n"
+                + Fore.YELLOW +
                 "Returning to main menu..."
                 + Style.RESET_ALL
                 )
@@ -466,7 +493,7 @@ def handle_add_recipe():
 
         elif details_correct == "exit":
             print(
-                Fore.BLUE +
+                Fore.YELLOW +
                 "\nReturning to main menu..."
                 + Style.RESET_ALL
                 )
