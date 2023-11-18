@@ -18,7 +18,6 @@ VAULT_WORKSHEET = SHEET.worksheet('vault')
 column_data = VAULT_WORKSHEET.col_values(1)
 
 
-# Function to 
 def search_recipe(value, column_data):
     """Check if a value is in the column data in the Vault Worksheet"""
     return value in column_data
@@ -63,47 +62,49 @@ def num_servings():
                 return servings
             else:
                 print(
-                    Fore.RED + 
-                    "Error! Servings cannot be less than 1. Please try again" 
+                    Fore.RED +
+                    "Error! Servings cannot be less than 1. Please try again"
                     + Style.RESET_ALL
                     )
         elif not servings_str.strip():
             print(
-                Fore.RED + 
-                "Don't leave blank! Enter the number of servings here:" 
+                Fore.RED +
+                "Don't leave blank! Enter the number of servings here:"
                 + Style.RESET_ALL
                 )
-            
+
         else:
             print(
-                Fore.RED + 
-                "Error! Please enter a valid whole number for servings:" 
+                Fore.RED +
+                "Error! Please enter a valid whole number for servings:"
                 + Style.RESET_ALL
                 )
 
 
 def enter_ingredients():
-    """ 
+    """
     User input of ingredients as strings and format the ingredients
     additional: if user has entered one only ingredient, confirm choice
     """
     while True:
         ingredients_str = input(
-            "\n Please enter the ingredients " 
+            "\n Please enter the ingredients "
             "(separated by commas): \n"
             "For example: 175g self-raising flour, 2 large eggs\n"
             ).lower()
 
         if not ingredients_str:
             print(
-                Fore.RED + 
-                "Don't leave blank! " 
-                "Enter your ingredients here:" 
+                Fore.RED +
+                "Don't leave blank! "
+                "Enter your ingredients here:"
                 + Style.RESET_ALL
                 )
         else:
             ingredients_split = ingredients_str.split(",")
-            ingredients = [ingredient.strip() for ingredient in ingredients_split]
+            ingredients = [
+                ingredient.strip() for ingredient in ingredients_split
+                ]
             return ingredients
 
 
@@ -111,37 +112,37 @@ def process_recipe(recipe_name, servings, ingredients):
     """
     Print recipe details back to the user
     """
-    print(Fore.GREEN + "\nThese are your recipe details:" )
+    print(Fore.GREEN + "\nThese are your recipe details:")
     print(f"New recipe is called: {recipe_name}")
     print(f"Number of servings: {servings}")
     print(f"Your ingredients are: {ingredients} \n" + Style.RESET_ALL)
 
 
 def specific_name():
-    """  
+    """
     Find item in the Vault worksheet by name
     List recipe details and print ingredients as a list.
-    """ 
+    """
     while True:
         recipe_to_find = input("Enter recipe name: \n").lower()
         cell = VAULT_WORKSHEET.find(recipe_to_find, in_column=1)
 
         if not recipe_to_find.strip():
             print(
-                Fore.RED + 
-                "Don't leave blank! Enter a recipe here:" 
+                Fore.RED +
+                "Don't leave blank! Enter a recipe here:"
                 + Style.RESET_ALL
                 )
             continue
-        
+
         if recipe_to_find.lower() == 'exit':
-                print("Returning to the main menu.")
-                break
-        
+            print("Returning to the main menu.")
+            break
+
         try:
             print("\nThese are the recipe details:")
             print(
-                Fore.BLUE + 
+                Fore.BLUE +
                 f"Name: {VAULT_WORKSHEET.cell(cell.row, 1).value}"
                 )
             print(
@@ -167,16 +168,35 @@ def specific_name():
                 break
             else:
                 print(
-                    Fore.RED + 
-                    "Invalid choice, please pick 1 or 2" 
+                    Fore.RED +
+                    "Invalid choice, please pick 1 or 2"
                     + Style.RESET_ALL
                     )
-        except:
-            print(Fore.RED + f"Recipe '{recipe_to_find}' not found" + Style.RESET_ALL)
+        except ValueError:
+            print(
+                Fore.RED +
+                f"Recipe '{recipe_to_find}' not found"
+                + Style.RESET_ALL
+                )
+
 
 def display_recipe_details(cell, recipe_to_update):
-    """ Display the current receip details when called"""
-    
+    """ Display the current receipe details when called"""
+
+    display_recipe_name = VAULT_WORKSHEET.cell(cell.row, 1).value
+    display_servings = VAULT_WORKSHEET.cell(cell.row, 2).value
+    display_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
+
+    print(
+        Fore.GREEN +
+        f"Recipe Name: {display_recipe_name}\n"
+        f"Servings: {display_servings}\n"
+        "Ingredients:"
+    )
+    for ingredient in display_ingredients:
+        print(f"- {ingredient}")
+        print(Style.RESET_ALL)
+
 
 def update_recipe_menu():
     """
@@ -187,7 +207,7 @@ def update_recipe_menu():
     """
     attempts = 1
     max_attempts = 2
-    while attempts <= max_attempts :
+    while attempts <= max_attempts:
         recipe_to_update = input(
             Fore.BLUE +
             "\nWhich recipe would you like to update?\n"
@@ -207,18 +227,51 @@ def update_recipe_menu():
                     + Style.RESET_ALL
                     )
         else:
-            if attempts < max_attempts: 
-                print(Fore.RED + f"Recipe '{recipe_to_update}' not found, " 
-                + Style.RESET_ALL)
+            if attempts < max_attempts:
+                print(
+                    Fore.RED + f"Recipe '{recipe_to_update}' not found, "
+                    + Style.RESET_ALL
+                )
                 attempts += 1
             else:
-                print(Fore.RED + f"Recipe '{recipe_to_update}' not found."
-                )
+                print(Fore.RED + f"Recipe '{recipe_to_update}' not found.")
                 print(Fore.BLUE + "Here are all the available recipes:")
                 view_all_recipes()
                 print("please choose a recipe from the list to continue...")
                 print(Style.RESET_ALL)
                 continue
+
+
+def update_recipe_name(cell):
+    """ Update the recipe name"""
+    updated_name = input("Enter new name: ").strip()
+    VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
+    print(
+        Fore.GREEN +
+        "Recipe name updated successfully!"
+        + Style.RESET_ALL
+    )
+
+
+def update_servings(cell):
+    """Update number of servings"""
+    updated_servings = input("Enter new number of servings: ").strip()
+    VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
+    print(
+        Fore.GREEN +
+        "Number of servings updated successfully!"
+        + Style.RESET_ALL
+    )
+
+
+def update_ingredients(cell):
+    """Update ingredients"""
+
+    print(
+        Fore.GREEN +
+        "Ingredients updated successfully!"
+        + Style.RESET_ALL
+    )
 
 
 def change_recipe_details(cell, recipe_to_update):
@@ -230,7 +283,14 @@ def change_recipe_details(cell, recipe_to_update):
     """
 
     print(
-        Fore.BLUE + "\n Which value do you want to change?\n" 
+        Fore.GREEN +
+        f"These are the current recipe details for '{recipe_to_update}'"
+        + Style.RESET_ALL
+        )
+    display_recipe_details(cell, recipe_to_update)
+
+    print(
+        Fore.BLUE + "\n Which value do you want to change?\n"
         + Style.RESET_ALL +
         "1. Recipe name\n"
         "2. Number of servings\n"
@@ -238,75 +298,40 @@ def change_recipe_details(cell, recipe_to_update):
         "4. Cancel recipe update\n"
     )
 
-    print(f"These are the current recipe details for '{recipe_to_update}'")
-    current_recipe_name = VAULT_WORKSHEET.cell(cell.row, 1).value
-    current_servings = VAULT_WORKSHEET.cell(cell.row, 2).value
-    current_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
-    print(
-        Fore.GREEN + 
-        f" Recipe Name: {current_recipe_name},\n" 
-        f" Servings: {current_servings}, "
-        f" Ingredients: {current_ingredients}"
-        + Style.RESET_ALL
-        )
+    while True:
+        try:
+            choice = int(input("Enter your choice (1-4)\n"))
+            if 1 <= choice <= 4:
 
-    choice = int(input("Enter your choice (1-4)\n"))
-    if 1 <= choice <= 4:
-        print("Make your changes here:")
-    else:
-        print(
-            Fore.RED +
-            "Invalid choice! Please pick a number between 1 and 4"
-            + Style.RESET_ALL
+                if choice == 1:
+                    update_recipe_name(cell)
+                    break
+                elif choice == 2:
+                    update_servings(cell)
+                    break
+                elif choice == 3:
+                    update_ingredients(cell)
+                    break
+                elif choice == 4:
+                    print(
+                        Fore.RED +
+                        "Recipe update cancelled. Returning to Main Menu..."
+                        + Style.RESET_ALL
+                    )
+                    break
+            else:
+                print(
+                    Fore.RED +
+                    "Invalid number! Please pick a number between 1 and 4"
+                    + Style.RESET_ALL
+                )
+        except ValueError:
+            print(
+                Fore.RED +
+                "Invalid choice! Please pick a number between 1 and 4"
+                + Style.RESET_ALL
             )
 
-    if choice == 1:
-        updated_name = input("Enter new name: ").strip()
-        VAULT_WORKSHEET.update_cell(cell.row, 1, updated_name)
-        print(
-            Fore.GREEN +
-            "Recipe name updated successfully!"
-            + Style.RESET_ALL
-            )
-
-    elif choice == 2:
-        updated_servings = input("Enter new number of servings: ").strip()
-        VAULT_WORKSHEET.update_cell(cell.row, 2, updated_servings)
-        print(
-            Fore.GREEN +
-            "Number of servings updated successfully!"
-            + Style.RESET_ALL
-            )
-
-    elif choice == 3:
-        update_ingredients()
-        print(
-            Fore.GREEN +
-            "Ingredients updated successfully!"
-            + Style.RESET_ALL
-            )
-
-    elif choice == 4:
-        print(
-            Fore.RED + 
-            "Recipe update cancelled. Returning to Main Menu..."
-            + Style.RESET_ALL
-            )
-        return
-    else:
-        print("Error! Please pick a number between 1 and 4")
-
-    print(f"These are the updated recipe details for '{recipe_to_update}'")
-    updated_recipe_name = VAULT_WORKSHEET.cell(cell.row, 1).value
-    updated_servings = VAULT_WORKSHEET.cell(cell.row, 2).value
-    updated_ingredients = VAULT_WORKSHEET.cell(cell.row, 3).value.split(", ")
-    print(
-        Fore.GREEN + 
-        f"Recipe Name: {updated_recipe_name}\n" 
-        f"Servings: {updated_servings}\n "
-        f"Ingredients: {updated_ingredients}"
-        + Style.RESET_ALL
-        )
 
 def delete_recipe():
     """
@@ -314,12 +339,12 @@ def delete_recipe():
     """
     while True:
         recipe_name_to_delete = input(
-            Fore.BLUE + 
+            Fore.BLUE +
             "\nWhich recipe would you like to delete?\n"
             + Style.RESET_ALL +
-            Fore.RED + 
+            Fore.RED +
             "Please note: that if you delete a recipe, it cannot be restored"
-            + Style.RESET_ALL 
+            + Style.RESET_ALL
         ).lower()
 
         try:
@@ -335,23 +360,24 @@ def delete_recipe():
             if delete_recipe_input == "yes":
                 VAULT_WORKSHEET.delete_rows(cell.row)
                 print(
-                    Fore.GREEN + 
+                    Fore.GREEN +
                     "Recipe has been successfully deleted, and Vault updated\n"
-                    + Style.RESET_ALL 
+                    + Style.RESET_ALL
                     )
                 print("/nNow returning you to the main menu...")
                 break
 
             elif delete_recipe_input == "no":
-                print(f"You chose not to delete {recipe_name_to_delete}. "
-                "\nNow returning to main menu...")
+                print(f"You chose not to delete {recipe_name_to_delete}. \n"
+                    "Now returning to main menu...")
                 break
 
             else:
                 print("Invalid input. Please enter 'yes' or 'no'.")
-        except:
+        except ValueError:
             print("Oops, it appears there's no recipe with the "
             f"name '{recipe_name_to_delete}', Please try another name!")
+
 
 def view_all_recipes():
     """
@@ -368,27 +394,29 @@ def view_all_recipes():
 
         for recipe_name in all_recipes:
             print(f"- {recipe_name}")
-    
+
     except Exception as e:
         print(f"Error: {e}")
 
 
 def display_menu():
-        print(
-        """
-        Main Menu
-        1. Add Recipe
-        2. Update Recipe
-        3. Delete Recipe
-        4. View a specific recipe
-        5. View all recipes
-        6. Exit
-        """
-        )
+    print(
+    """
+    Main Menu
+    1. Add Recipe
+    2. Update Recipe
+    3. Delete Recipe
+    4. View a specific recipe
+    5. View all recipes
+    6. Exit
+    """
+    )
+
 
 def get_menu_choice():
     """Return choice of menu item and select item in list"""
     return input("Enter your menu choice (1-6): \n")
+
 
 def handle_add_recipe():
     """ Function for adding a complete new recipe to the Vault"""
@@ -408,15 +436,15 @@ def handle_add_recipe():
                 [recipe_name, servings, ingredients_combo]
                 )
             print(
-                Fore.GREEN + 
+                Fore.GREEN +
                 "Vault updated. Recipe added successfully!!\n"
-                "Returning to main menu..." 
+                "Returning to main menu..."
                 + Style.RESET_ALL
                 )
             break
         elif details_correct == "no":
             print(
-                Fore.RED + 
+                Fore.RED +
                 f"Your new recipe was not added to database"
                 + Style.RESET_ALL
                 )
@@ -432,25 +460,30 @@ def handle_add_recipe():
         else:
             print(
                 Fore.RED +
-                "Error! please input 'yes' or 'no'" 
+                "Error! please input 'yes' or 'no'"
                 + Style.RESET_ALL
                 )
+
 
 def handle_update_recipe():
     """Function for calling the recipe update menu"""
     update_recipe_menu()
 
+
 def handle_delete_recipe():
     """Function for calling the delete recipe menu"""
     delete_recipe()
+
 
 def handle_view_specific_recipe():
     """Function for calling the find specific recipe menu """
     specific_name()
 
+
 def handle_view_all_recipes():
     """Function for viewing all recipes """
     view_all_recipes()
+
 
 def main_menu():
     """Start of Program function """
@@ -477,10 +510,11 @@ def main_menu():
             break
         else:
             print(
-                Fore.RED + 
-                f"Error! '{choice}' is not a number between " 
-                "1 and 6. Please try again!" 
+                Fore.RED +
+                f"Error! '{choice}' is not a number between "
+                "1 and 6. Please try again!"
                 + Style.RESET_ALL
             )
+
 
 main_menu()
