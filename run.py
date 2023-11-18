@@ -162,7 +162,7 @@ def update_recipe_menu():
 
         if search_recipe(recipe_to_update, column_data):
             print(f"Recipe found on row {cell.row}")
-            change_recipe_details()
+            change_recipe_details(cell)
             break
         elif not recipe_to_update.strip():
             print(
@@ -176,15 +176,18 @@ def update_recipe_menu():
                 + Style.RESET_ALL)
                 attempts += 1
             else:
+                print(Fore.RED + f"Recipe '{recipe_to_update}' not found."
+                )
                 print(Fore.BLUE + "Here are all the available recipes:")
                 view_all_recipes()
-                print(Style.RESET_ALL)
                 print("please choose a recipe from the list to continue...")
+                print(Style.RESET_ALL)
                 continue
-            
 
 
-def change_recipe_details():
+def change_recipe_details(cell):
+    """
+    """
     print(
     "\n Which value do you want to change?\n"
     "1. Recipe name\n"
@@ -261,8 +264,7 @@ def view_all_recipes():
         print(f"Error: {e}")
 
 
-def main_menu():
-    while True:
+def display_menu():
         print(
         """
         \nMain Menu
@@ -275,49 +277,75 @@ def main_menu():
         """
         )
 
-        choice = input("Enter your menu choice (1-6): \n")
+def get_menu_choice():
+    """Return choice of menu item and select item in list"""
+    return input("Enter your menu choice (1-6): \n")
+
+def handle_add_recipe():
+    """ Function for adding a new recipe """
+    while True:
+
+        recipe_name = create_recipe_name(column_data)
+        servings = num_servings()
+        ingredients = enter_ingredients()
+        process_recipe(recipe_name, servings, ingredients)
+
+        details_correct = input("Is this information correct? Yes/No \n"
+            "   or enter 'exit' to return to main menu: \n").lower()
+        if details_correct == "yes":
+            ingredients_combo = ", ".join(ingredients)
+            VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
+            print(Fore.GREEN + 
+                "Vault updated. Recipe added successfully!!\n"
+                "Returning to main menu..." + Style.RESET_ALL)
+            break
+        elif details_correct == "no":
+            print(f"You chose '{choice}', your new recipe was not "
+            "added to database")
+        elif details_correct == "exit":
+            print("Returning to main menu...")
+            break
+        else:
+            print(Fore.RED +
+                "Error! please input 'yes' or 'no'" + Style.RESET_ALL)
+
+def handle_update_recipe():
+    """Function for calling the recipe update menu"""
+    update_recipe_menu()
+
+def handle_delete_recipe():
+    """Function for calling the delete recipe menu"""
+    delete_recipe()
+
+def handle_view_specific_recipe():
+    """Function for calling the find specific recipe menu """
+    specific_name()
+
+def handle_view_all_recipes():
+    """Function for viewing all recipes """
+    view_all_recipes()
+
+def main_menu():
+    """Start of Program function """
+    while True:
+        display_menu()
+        choice = get_menu_choice()
 
         if choice == "1":
-            while True:
-                recipe_name = create_recipe_name(column_data)
-                servings = num_servings()
-                ingredients = enter_ingredients()
-                process_recipe(recipe_name, servings, ingredients)
-
-                details_correct = input("Is this information correct? Yes/No \n"
-                "   or enter 'exit' to return to main menu: \n").lower()
-                if details_correct == "yes":
-                    ingredients_combo = ", ".join(ingredients)
-                    VAULT_WORKSHEET.append_row([recipe_name, servings, ingredients_combo])
-                    print(Fore.GREEN + 
-                        "Vault updated. Recipe added successfully!!\n"
-                        "Returning to main menu..."
-                        + Style.RESET_ALL)
-                    break
-                elif details_correct == "no":
-                    print(f"You chose '{choice}', your new recipe was not "
-                    "added to database")
-                elif details_correct == "exit":
-                    print("Returning to main menu...")
-                    break
-                else:
-                    print(Fore.RED +
-                        "Error! please input 'yes' or 'no'"
-                        + Style.RESET_ALL)
+            handle_add_recipe()
         elif choice == "2":
-            update_recipe_menu()
+            handle_update_recipe()
         elif choice == "3":
-            delete_recipe()
+            handle_delete_recipe()
         elif choice == "4":
-            specific_name()
+            handle_view_specific_recipe()
         elif choice == "5":
-            view_all_recipes()
+            handle_view_all_recipes()
         elif choice == "6":
-            print("Exiting menu, bye babes...")
+            print("Exiting menu, see you later!")
             break
         else:
             print(Fore.RED + f"Error! '{choice}' is not a number between " 
             "1 and 6. Please try again!" + Style.RESET_ALL)
-        
-if __name__ == "__main__":
-    main_menu()
+
+main_menu()
