@@ -1,32 +1,34 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Recipe Book
 
-Welcome,
+![amiresponsive](https://github.com/meganw22/project-three/assets/141934888/54c3e583-db8b-46e8-b77f-843fbfbc604f)
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **March 14, 2023**
+Recipe Book is a console based recipe management system which uses Google Sheets for storage.
 
-## Reminders
+The program allows users to add, update, delete and view recipes in real-time.
 
-- Your code must be placed in the `run.py` file
-- Your dependencies must be placed in the `requirements.txt` file
-- Do not edit any of the other files or your code may not deploy properly
+* Visit the deployed terminal through Heroku: [Recipe Book](https://recipe-generator-p3-4a1ceeda2446.herokuapp.com/)
 
-## Creating the Heroku app
+## User Experience
+### User Stories
+  * As a user, I want to have an online recipe management system
+  * As a user, I want to enter my own recipe names
+  * As a user, I want to be able to see any recipes I have added
+  * As a user, I want to see the details of each individual recipe when I choose
+  * As a user, I want to to have an easy to use program
+  * As a user, I want to be updated with confirmations and proof the recipe addition has worked
+  * As a user, I want to remain up to date and edit recipes where I want
+  * As a user, I want my recipes stored online 
 
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
+### Flowchart
 
-1. `heroku/python`
-2. `heroku/nodejs`
+### Operation
+## 
+## Features
 
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
+### Main Menu
+![deployed-main-menu](https://github.com/meganw22/project-three/assets/141934888/eb7c622e-1da8-4dcd-be1a-5d39100f5669)
 
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
-
-Connect your GitHub repository and deploy as normal.
-
-## Constraints
-
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
-
----
-
-Happy coding!
+### Add recipe
+### Update Recipe
+### Delete Recipe
+### View Recipes
