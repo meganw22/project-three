@@ -388,7 +388,6 @@ def delete_recipe():
 
         cell = None
 
-        # Check if the recipe exists
         for row in VAULT_WORKSHEET.findall(recipe_name_to_delete, in_column=1):
             cell = row
             break
